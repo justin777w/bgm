@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>對話遊戲</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: url('https://imgur.com/dId47M3.jpg') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    .dialogue-container {
+      position: absolute;
+      bottom: 5%;
+      width: 100%;
+      text-align: left;
+      padding: 20px;
+      background-color: rgba(40, 40, 40, 0.9); /* 深色背景 */
+      color: white;
+      font-size: 1.6em;
+      line-height: 1.8em;
+      box-sizing: border-box;
+      border-radius: 20px; /* 圓角 */
+      font-weight: normal; /* 非粗體 */
+    }
+  </style>
+</head>
+<body>
+  <!-- 對話框 -->
+  <div class="dialogue-container" id="dialogue"></div>
+
+  <!-- 背景音樂 -->
+  <audio id="bgm" preload="auto">
+    <source src="https://raw.githubusercontent.com/justin777w/bgm/main/%E5%B1%8A%E3%81%8B%E3%81%AA%E3%81%84%E6%81%8B.mp3" type="audio/mpeg">
+    您的瀏覽器不支援音訊播放。
+  </audio>
+
+  <script>
+    // 音樂設定：從 0:00 播放，音量 70%
+    window.addEventListener("DOMContentLoaded", () => {
+      const audio = document.getElementById("bgm");
+      audio.volume = 0.7;
+      audio.currentTime = 0;  // 從 0:00 開始
+      audio.play();  // 開始播放音樂
+    });
+
+    // 對話文字
+    const rawText = `呼～好冷阿#
+寒冷的空氣刺痛著鼻腔，天空中降下的雪花不斷飄落在傘上，就算穿了好幾件羽絨外衣似乎也抵擋不了這種酷寒。#
+近年來因為氣候變遷的加速，各地冬天都越來越冷，甚至連臺灣都開始降起雪花。#
+又到了一年一度的聖誕節阿，即使到處都在慶祝節日，我也實在高興不起來。#
+年末的工作一大堆，以前的朋友們也都有各自的規劃而無法聚在一起。#
+算了，想再多也只會讓人心煩，今天就久違的吃點關東煮暖暖身體吧。#
+就在我準備轉過巷子回家時#
+嗚阿！#
+路燈下的一塊黑影下讓我不禁嚇出了聲音，仔細一看，似乎是一個人……#`;
+
+    const lines = rawText.split('#').filter(line => line.trim() !== '');
+    let index = 0;
+    let typing = false;
+
+    function typeLine(text, elementId, speed, callback) {
+      let i = 0;
+      const target = document.getElementById(elementId);
+      target.innerHTML = '';
+      typing = true;
+
+      const typer = setInterval(() => {
+        if (i < text.length) {
+          target.innerHTML += text[i++];
+        } else {
+          clearInterval(typer);
+          typing = false;
+          callback && callback();
+        }
+      }, speed);
+    }
+
+    function nextDialogue() {
+      if (typing) return;
+      if (index < lines.length) {
+        typeLine(lines[index++], "dialogue", 40);
+      }
+    }
+
+    document.addEventListener("click", nextDialogue);
+    nextDialogue();
+  </script>
+</body>
+</html>
